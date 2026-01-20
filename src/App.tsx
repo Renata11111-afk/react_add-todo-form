@@ -7,7 +7,7 @@ import { Todo } from './types/Todo';
 
 export const App: React.FC = () => {
   const initialTodos: Todo[] = todosFromServer.map(todo => {
-    const user = usersFromServer.find(u => u.id === todo.userId);
+    const user = usersFromServer.find(user => user.id === todo.userId);
 
     return {
       ...todo,
@@ -17,12 +17,12 @@ export const App: React.FC = () => {
 
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const [title, setTitle] = useState('');
-  const [selectedUserId, setSelectedUserId] = useState('0');
+  const [selectedUserId, setSelectedUserId] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [userError, setUserError] = useState(false);
 
   const isTitleValid = title.trim().length > 0;
-  const isUserValid = selectedUserId !== '0';
+  const isUserValid = selectedUserId !== '';
 
   const handleAdd = (event: React.FormEvent) => {
     event.preventDefault();
@@ -30,14 +30,18 @@ export const App: React.FC = () => {
     setTitleError(!isTitleValid);
     setUserError(!isUserValid);
 
-    if (!isTitleValid || !isUserValid) return;
+    if (!isTitleValid || !isUserValid) {
+      return;
+    }
 
-    const user = usersFromServer.find(u => u.id === Number(selectedUserId));
+    const user = usersFromServer.find(user => user.id === Number(selectedUserId));
 
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     const newTodo: Todo = {
-      id: todos.length ? Math.max(...todos.map(t => t.id)) + 1 : 1,
+      id: todos.length ? Math.max(...todos.map(todo => todo.id)) + 1 : 1,
       title,
       userId: user.id,
       completed: false,
@@ -46,11 +50,10 @@ export const App: React.FC = () => {
 
     setTodos(prev => [...prev, newTodo]);
     setTitle('');
-    setSelectedUserId('0');
+    setSelectedUserId('');
     setTitleError(false);
     setUserError(false);
   };
-
 
   return (
     <div className="App">
@@ -58,29 +61,37 @@ export const App: React.FC = () => {
 
       <form onSubmit={handleAdd}>
         <div className="field">
+        <label htmlFor="todo-title">Title</label>
           <input
+            id="todo-title"
             type="text"
             data-cy="titleInput"
             placeholder="Enter todo title"
             value={title}
-            onChange={event => {setTitle(event.target.value);
-              if (titleError) setTitleError(false);
+            onChange={event => {
+              setTitle(event.target.value);
+              if (titleError) {
+                setTitleError(false);
+              }
             }}
           />
           {titleError && <span className="error">Please enter a title</span>}
         </div>
 
         <div className="field">
+        <label htmlFor="todo-user">User</label>
           <select
+            id="todo-user"
             data-cy="userSelect"
             value={selectedUserId}
-            onChange={event => {setSelectedUserId(event.target.value);
-              if (userError) setUserError(false);
+            onChange={event => {
+              setSelectedUserId(event.target.value);
+              if (userError) {
+                setUserError(false);
+              }
             }}
-            required
           >
-
-            <option value='0' disabled>
+            <option value="" disabled>
               Choose a user
             </option>
             {usersFromServer.map(user => (
@@ -92,10 +103,7 @@ export const App: React.FC = () => {
           {userError && <span className="error">Please choose a user</span>}
         </div>
 
-        <button
-          type="submit"
-          data-cy="submitButton"
-        >
+        <button type="submit" data-cy="submitButton">
           Add
         </button>
       </form>

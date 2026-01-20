@@ -1,15 +1,14 @@
 import React from 'react';
-import { Todo } from "../../types/Todo";
+import { Todo } from '../../types/Todo';
 import cn from 'classnames';
 import { UserInfo } from '../UserInfo';
 
 interface TodoInfoProps {
-  todo: Todo,
+  todo: Todo;
 }
 
 export const TodoInfo: React.FC<TodoInfoProps> = ({ todo }) => (
   <article
-    key={todo.id}
     data-id={todo.id}
     className={cn('TodoInfo', { 'TodoInfo--completed': todo.completed })}
   >
