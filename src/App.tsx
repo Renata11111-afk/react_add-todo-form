@@ -7,11 +7,13 @@ import { Todo } from './types/Todo';
 
 export const App: React.FC = () => {
   const initialTodos: Todo[] = todosFromServer.map(todo => {
-    const user = usersFromServer.find(user => user.id === todo.userId);
+    const todoUser = usersFromServer.find(
+      serverUser => serverUser.id === todo.userId,
+    );
 
     return {
       ...todo,
-      user,
+      user: todoUser,
     };
   });
 
@@ -34,18 +36,20 @@ export const App: React.FC = () => {
       return;
     }
 
-    const user = usersFromServer.find(user => user.id === Number(selectedUserId));
+    const selectedUser = usersFromServer.find(
+      serverUser => serverUser.id === Number(selectedUserId),
+    );
 
-    if (!user) {
+    if (!selectedUser) {
       return;
     }
 
     const newTodo: Todo = {
       id: todos.length ? Math.max(...todos.map(todo => todo.id)) + 1 : 1,
       title,
-      userId: user.id,
+      userId: selectedUser.id,
       completed: false,
-      user,
+      user: selectedUser,
     };
 
     setTodos(prev => [...prev, newTodo]);
@@ -61,7 +65,7 @@ export const App: React.FC = () => {
 
       <form onSubmit={handleAdd}>
         <div className="field">
-        <label htmlFor="todo-title">Title</label>
+          <label htmlFor="todo-title">Title</label>
           <input
             id="todo-title"
             type="text"
@@ -79,7 +83,7 @@ export const App: React.FC = () => {
         </div>
 
         <div className="field">
-        <label htmlFor="todo-user">User</label>
+          <label htmlFor="todo-user">User</label>
           <select
             id="todo-user"
             data-cy="userSelect"
